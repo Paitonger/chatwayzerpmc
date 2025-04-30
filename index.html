@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Чат с никнеймом</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #eef1f5;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      color: #444;
+    }
+
+    #chatBox {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      height: 350px;
+      overflow-y: auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .message {
+      margin: 10px 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #daf1ff;
+      max-width: 80%;
+      word-wrap: break-word;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .nickname {
+      font-weight: bold;
+      color: #1e88e5;
+      margin-bottom: 3px;
+      display: block;
+    }
+
+    #inputArea {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input, textarea, button {
+      font-size: 14px;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #1e88e5;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #1565c0;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>💬 Локальный Чат</h2>
+  <div id="chatBox"></div>
+
+  <div id="inputArea">
+    <input type="text" id="nickname" placeholder="Ваш никнейм">
+    <textarea id="messageInput" placeholder="Введите сообщение..."></textarea>
+    <button onclick="sendMessage()">Отправить</button>
+  </div>
+
+  <script>
+    function loadMessages() {
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      const chatBox = document.getElementById("chatBox");
+      chatBox.innerHTML = "";
+
+      messages.forEach(({ nickname, text }) => {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "message";
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "nickname";
+        nameSpan.textContent = nickname || "Аноним";
+
+        msgDiv.appendChild(nameSpan);
+        msgDiv.appendChild(document.createTextNode(text));
+        chatBox.appendChild(msgDiv);
+      });
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function sendMessage() {
+      const nicknameInput = document.getElementById("nickname");
+      const messageInput = document.getElementById("messageInput");
+
+      const nickname = nicknameInput.value.trim() || "Аноним";
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      messages.push({ nickname, text });
+      localStorage.setItem("chatMessages", JSON.stringify(messages));
+
+      messageInput.value = "";
+      loadMessages();
+    }
+
+    window.onload = loadMessages;
+  </script>
+
+</body>
+</html>
